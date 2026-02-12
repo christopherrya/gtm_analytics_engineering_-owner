@@ -26,12 +26,15 @@ WITH opportunities AS (
 
 ),
 
+-- One lead per opportunity (first by lead_id) for 1:1 enrichment
 leads AS (
     SELECT *
-    FROM {{ ref('ops_leads') }}
+    FROM {{ deduplicate(
+        relation=ref('ops_leads'),
+        partition_by='converted_opportunity_id',
+        order_by='lead_id'
+    ) }}
     WHERE converted_opportunity_id IS NOT NULL
-    QUALIFY ROW_NUMBER() OVER (PARTITION BY converted_opportunity_id ORDER BY lead_id) = 1
-
 ),
 
 joined AS (
