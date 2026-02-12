@@ -231,6 +231,9 @@ The Pipeline Health Dashboard answers a very important question: **how much reve
 
 The dashboard reads from `rpt_pipeline_health` (27 pre-aggregated rows across channel × record type × pipeline segment × demo status × health status). The row-level data in `ops_pipeline_health` gives the record-by-record detail for operational fixes and CRM integration/Reverse ETL flexibility. 
 
+![Pipeline Health Dashboard — Overview](images/pipeline_health1/Screenshot%202026-02-11%20at%208.53.43%20PM.png)
+*Pipeline Health Dashboard: Overview with pipeline summary, demo status breakdown, and key metrics by channel.*
+
 #### Open Pipeline: 409 Opportunities, $3.67M Forecasted Revenue/$792k Potential Accnual Revenue (Weighted Probability)
 
 The pipeline splits into three groups by demo status — and the split reveals where value is leaking:
@@ -285,6 +288,9 @@ The Pipeline Health Dashboard catches this pattern in the current open pipeline.
 
 539 losses over 6 months ≈ 90 per month, with a 3–4 week lifecycle, means ~45–90 records are in the active danger zone at any given snapshot. The current 46 fits this pattern.
 
+![Pipeline Health Dashboard — Opportunities](images/pipeline_health1/Screenshot%202026-02-11%20at%208.53.56%20PM.png)
+*Pipeline Health Dashboard: Opportunities view — demo status, health segmentation, and post-demo danger zone.*
+
 **Validation Queries:**
 
 Historical loss pattern (`ops_opportunities`):
@@ -337,6 +343,9 @@ The risk distribution across the entire pipeline (opportunities + leads) shows t
 - **High risk:** 5,001 records (33%) — all Stale leads and Stalled/Aging opportunities
 - **Medium risk:** 4,591 records (30%) — Aging leads and Maturing opportunities
 - **Low risk:** 5,520 records (37%) — Active leads and Fresh opportunities
+
+![Pipeline Health Dashboard — Working Leads](images/pipeline_health1/Screenshot%202026-02-11%20at%208.54.11%20PM.png)
+*Pipeline Health Dashboard: Working Leads view — health segmentation (Active / Aging / Stale), forecasted value, and engagement metrics.*
 
 **Validation Query** (`rpt_pipeline_health` — lead health segmentation):
 
