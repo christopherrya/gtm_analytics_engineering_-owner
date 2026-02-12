@@ -147,3 +147,76 @@ models:
         description: "Report update timestamp (from audit_columns macro)"
       - name: source_system
         description: "Pipeline that produced the report (from audit_columns macro)"
+
+  - name: rpt_lead_outreach_priority
+    description: >
+      Prioritized queue of unconverted working leads for sales outreach.
+      One row per lead. Segments by outreach section (No Outreach / Slow Outreach),
+      priority (P0–P2, Late/Very Late/Critically Late, Expired), and dashboard status
+      (ACTION REQUIRED, RE-ENGAGE, MONITOR, EXPIRED, DATA QUALITY). Powers the
+      Lead Outreach Priority / Speed-to-Lead dashboard.
+    columns:
+      - name: lead_id
+        description: "Primary key - unique lead identifier"
+        tests:
+          - unique
+          - not_null
+      - name: outreach_section
+        description: "No Outreach (no contact yet) or Slow Outreach (contacted late)"
+      - name: outreach_priority
+        description: "P0 Immediate, P2 At Risk, Expired, Late, Very Late, Critically Late, or Outbound - No Anchor Date"
+      - name: dashboard_status
+        description: "ACTION REQUIRED, RE-ENGAGE, MONITOR, EXPIRED — NURTURE, DATA QUALITY — NO ANCHOR, or REVIEW"
+      - name: is_actionable
+        description: "True if within 72hr window (no outreach) or in slow-outreach bucket requiring follow-up"
+      - name: is_high_value_urgent
+        description: "True for actionable no-outreach leads with predicted_sales_with_owner >= 5000"
+      - name: channel
+        description: "Inbound or Outbound"
+      - name: working_lead_health
+        description: "Active, Aging, or Stale (for working leads)"
+      - name: predicted_sales_tier
+        description: "Tier 1 ($10k+) through Tier 6 (Under $500)"
+      - name: speed_to_lead_minutes
+        description: "Minutes from form submission to first sales contact (inbound only)"
+      - name: recommended_action
+        description: "Operational recommendation text for the lead"
+
+  - name: rpt_channel_efficiency
+    description: >
+      Monthly channel efficiency by channel (Inbound/Outbound) with rolling 3-month CAC,
+      MoM deltas, threshold flags, and channel mix percentages. One row per channel × month.
+      Powers the Channel Efficiency Monitor dashboard.
+    columns:
+      - name: channel
+        description: "Inbound or Outbound"
+      - name: expense_month
+        description: "First of month as DATE"
+      - name: new_leads
+        description: "Leads generated in the month"
+      - name: converted_leads
+        description: "Leads that became opportunities"
+      - name: deals_won
+        description: "Closed-won deals in the month"
+      - name: monthly_cac
+        description: "CAC for the month (channel cost / deals won)"
+      - name: rolling_3mo_cac
+        description: "3-month rolling average CAC"
+      - name: rolling_3mo_conversion_rate
+        description: "3-month rolling win rate (of converted)"
+      - name: cac_mom_pct_change
+        description: "Month-over-month CAC percent change"
+      - name: conversion_rate_mom_pct_change
+        description: "Month-over-month conversion rate percent change"
+      - name: pct_of_total_spend
+        description: "This channel's share of total GTM spend (%)"
+      - name: pct_of_total_wins
+        description: "This channel's share of total wins (%)"
+      - name: cac_threshold_flag
+        description: "Healthy, Warning (>$2k), or Critical (>$3k) based on monthly CAC"
+      - name: conversion_threshold_flag
+        description: "Healthy, Warning (<15%), or Critical (<10%) based on win rate"
+      - name: cac_trend
+        description: "Stable, Improving, Deteriorating, or Insufficient Data vs rolling CAC"
+      - name: efficiency_score
+        description: "Composite efficiency metric (CAC / conversion rate)"

@@ -3,12 +3,36 @@ version: 2
 models:
   - name: raw_leads
     description: "Deduplicated leads from ingress layer"
+    columns:
+      - name: lead_id
+        description: "Primary key - unique lead identifier"
+        tests:
+          - unique
+          - not_null
 
   - name: raw_opportunities
     description: "Deduplicated opportunities from ingress layer"
+    columns:
+      - name: opportunity_id
+        description: "Primary key - unique opportunity identifier"
+        tests:
+          - unique
+          - not_null
 
   - name: raw_expenses_advertising
     description: "Deduplicated advertising expenses from ingress layer"
+    columns:
+      - name: month
+        description: "Month (text format from source)"
+        tests:
+          - unique
+          - not_null
 
   - name: raw_expenses_salary_and_commissions
     description: "Deduplicated salary and commission expenses from ingress layer"
+    columns:
+      - name: month
+        description: "Month (text format from source)"
+        tests:
+          - unique
+          - not_null
