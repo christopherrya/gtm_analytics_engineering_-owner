@@ -564,4 +564,4 @@ The two data products built here — Pipeline Health Dashboard and Channel Effic
 
 Feel free to use the validation queries throughout this document to read through outputs, piece by piece. Just make sure to replace demo_db/gtm_case* with your database and schema when running in your environment!
 
-- Christopher Silva
+-- Christopher Silva
