@@ -432,7 +432,7 @@ Speed to lead is the highest-impact, lowest-cost lever. The data shows a huge op
 | P2 — At Risk | 44 | 1–3 days | Contact ASAP — approaching 72hr expiry |
 | Expired | 3,093 | > 72 hours | Move to nurture campaign |
 
-![Speed-to-Lead Dashboard — Action Queue](images/Screenshot%202026-02-11%20at%202.43.49%20PM.png)
+![Speed-to-Lead Dashboard — Action Queue](images/speed_to_lead2/Screenshot%202026-02-11%20at%202.43.49%20PM.png)
 *Action Queue tab: Immediate Action Queue table — leads with no contact yet, sorted by value tier and wait time, with P0/P2/Expired priority breakdown.*
 
 **Validation Query** (`rpt_lead_outreach_priority` — outreach priority distribution):
