@@ -380,7 +380,7 @@ The value-add from both data products isn't that the sales org can look at a das
 - **`ops_pipeline_health`** is row-level with `record_id` — dervied every field (health status, risk level, demo status, days in pipeline, days in current stage) can be written back to its according CRM record as custom fields
 - **`ops_leads`** holds the same structure for working leads — predicted sales tier, outreach status, actionability flags, and priority scores are all record-level and CRM-writeable. 
 
-A reverse ETL layer (Census, Hightouch, or a custom dbt-triggered sync) would push these derived fields back to the CRM on a scheduled cadence. The result is that health scoring, risk classification, and triage recommendations appear natively in the rep's workflow — as derived fields on the Opportunity or Lead record, as filtered list views, or as trigger conditions for automated sequences.
+A reverse ETL layer would push these derived fields back to the CRM on a scheduled cadence through a tool such as Census or Hightouch. The result is that health scoring, risk classification, and triage recommendations appear natively in the rep's workflow — as derived fields on the Opportunity or Lead record, as filtered list views, or as trigger conditions for automated sequences.
 
 **Trigger-Based Actions on Health Status Transitions**
 
