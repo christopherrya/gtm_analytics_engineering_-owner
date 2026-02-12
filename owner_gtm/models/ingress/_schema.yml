@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: ingress_leads
+    description: "Direct source reference to LEADS table in gtm_case schema"
+
+  - name: ingress_opportunities
+    description: "Direct source reference to OPPORTUNITIES table in gtm_case schema"
+
+  - name: ingress_expenses_advertising
+    description: "Direct source reference to EXPENSES_ADVERTISING table in gtm_case schema"
+    columns:
+      - name: month
+        tests:
+          - unique
+          - not_null
+
+  - name: ingress_expenses_salary_and_commissions
+    description: "Direct source reference to EXPENSES_SALARY_AND_COMMISSIONS table in gtm_case schema"
+    columns:
+      - name: month
+        tests:
+          - unique
+          - not_null

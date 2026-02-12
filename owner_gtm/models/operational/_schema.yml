@@ -1,0 +1,114 @@
+version: 2
+
+models:
+  - name: ops_leads
+    description: >
+      Entity-level lead table. The single source of truth for all lead attributes.
+      Adds speed-to-lead buckets, predicted sales tiers, lead age tracking,
+      and working lead health classification (Active/Aging/Stale).
+    columns:
+      - name: lead_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: channel
+        description: "Inbound or Outbound"
+      - name: status
+        description: "Current lead status (standardized)"
+      - name: is_converted
+        description: "Whether this lead converted to an opportunity"
+      - name: speed_to_lead_bucket
+        description: "Categorized speed-to-lead: 0-5 min, 5-15 min, 15-60 min, 1-24 hours, 1-3 days, 3+ days"
+      - name: predicted_sales_tier
+        description: "Bucketed predicted sales: $5,000+, $2,000-5,000, $1,000-2,000, $500-1,000, $1-500, Zero, Unknown"
+      - name: days_since_last_activity
+        description: "Days between last activity and dataset end date (2024-07-10)"
+      - name: working_lead_health
+        description: "For Working leads only: Active (<30d), Aging (30-90d), or Stale (>90d)"
+
+  - name: ops_opportunities
+    description: >
+      Entity-level opportunity table enriched with lead-sourced attributes
+      (channel, predicted sales, decision maker status, speed-to-lead).
+      Adds loss categorization: Pre-Demo, Process/Follow-Up, Competitive, Product Fit.
+    columns:
+      - name: opportunity_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: lead_id
+        description: "FK to the originating lead"
+      - name: channel
+        description: "Channel of the originating lead (Inbound/Outbound)"
+      - name: deal_outcome
+        description: "Won, Lost, or Open"
+      - name: loss_category
+        description: "Categorized loss reason: Pre-Demo Loss, Process/Follow-Up Loss, Competitive Loss, Product Fit Loss, Other Loss"
+      - name: monthly_subscription
+        description: "Fixed monthly subscription fee ($500)"
+      - name: monthly_take_rate
+        description: "5% take rate on predicted monthly sales with Owner (0 if predicted sales unknown)"
+      - name: monthly_revenue
+        description: "Estimated monthly revenue per deal (subscription + take rate)"
+      - name: days_to_close
+        description: "Days from opportunity creation to close"
+      - name: days_demo_to_close
+        description: "Days from demo set date to close"
+
+  - name: ops_pipeline_health
+    description: >
+      Row-level operational view of everything still in play. Unions open
+      opportunities with unconverted working leads into a single pipeline view,
+      enabling flexible slicing by channel, health, stage, and value.
+      Grain: one row per active pipeline record (open opportunity OR unconverted working lead).
+    columns:
+      - name: record_id
+        description: "Opportunity ID or Lead ID depending on record_type"
+      - name: record_type
+        description: "Distinguishes 'Opportunity' vs 'Lead' for filtering"
+      - name: channel
+        description: "Inbound or Outbound"
+      - name: stage_name
+        description: "Opportunity stage or lead status"
+      - name: pipeline_segment
+        description: "Granular classification for dashboard grouping (e.g. Early Pipeline, Active Lead)"
+      - name: health_status
+        description: "Fresh/Maturing/Aging/Stalled for opportunities; Active/Aging/Stale for leads"
+      - name: risk_level
+        description: "Loss risk indicator: Low, Medium, High"
+      - name: forecasted_monthly_revenue
+        description: "Monthly revenue (opportunities) or estimated if converted (leads)"
+      - name: forecasted_annual_revenue
+        description: "Annualized forecast (monthly * 12)"
+      - name: ingest_ts
+        description: "Timestamp when the row was loaded (from audit_columns macro)"
+      - name: update_ts
+        description: "Timestamp when the row was last updated (from audit_columns macro)"
+      - name: source_system
+        description: "System of record / pipeline that produced the row (from audit_columns macro)"
+
+  - name: ops_expenses
+    description: >
+      Unified monthly GTM expenses combining advertising spend with
+      sales team salary/commissions. Advertising allocated to inbound channel,
+      outbound salary allocated to outbound channel.
+    columns:
+      - name: expense_month
+        description: "First of month as DATE"
+        tests:
+          - unique
+          - not_null
+      - name: advertising_spend
+        description: "Monthly advertising spend (USD)"
+      - name: outbound_sales_team_cost
+        description: "Monthly outbound team salary + commissions (USD)"
+      - name: inbound_sales_team_cost
+        description: "Monthly inbound team salary + commissions (USD)"
+      - name: total_gtm_cost
+        description: "Sum of all GTM costs for the month"
+      - name: inbound_channel_cost
+        description: "Advertising + inbound sales team cost"
+      - name: outbound_channel_cost
+        description: "Outbound sales team cost"

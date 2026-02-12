@@ -1,0 +1,36 @@
+name: 'owner_gtm'
+version: '1.0.0'
+
+profile: 'owner_gtm'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  owner_gtm:
+    ingress:
+      +materialized: view
+      +schema: gtm_case_ingress
+    raw:
+      +materialized: view
+      +schema: gtm_case_raw
+    staging:
+      +materialized: view
+      +schema: gtm_case_staging
+    entity:
+      +materialized: view
+      +schema: gtm_case_entity
+    operational:
+      +materialized: table
+      +schema: gtm_case_operational
+    reporting:
+      +materialized: table
+      +schema: gtm_case_reporting

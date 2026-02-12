@@ -1,0 +1,149 @@
+version: 2
+
+models:
+  - name: rpt_funnel_summary
+    description: >
+      Full-funnel GTM summary by channel (Inbound vs Outbound).
+      One row per channel with lead counts, conversion rates at each stage,
+      win rates, loss category breakdowns, speed-to-lead metrics,
+      decision maker connection rates, and prospect profile averages.
+      This is the primary table for answering "where do we invest to scale 2-3x?"
+    columns:
+      - name: channel
+        description: "Inbound or Outbound"
+        tests:
+          - unique
+          - not_null
+      - name: total_leads
+        description: "Total leads in this channel"
+      - name: converted_leads
+        description: "Leads that converted to opportunities"
+      - name: lead_to_opp_rate_pct
+        description: "Lead-to-opportunity conversion rate (%)"
+      - name: demo_rate_pct
+        description: "Percentage of opportunities where a demo was held"
+      - name: win_rate_pct
+        description: "Win rate on closed deals (%)"
+      - name: lead_to_win_rate_pct
+        description: "End-to-end lead-to-closed-won rate (%)"
+      - name: pre_demo_losses
+        description: "Deals lost before demo was held"
+      - name: process_losses
+        description: "Deals lost due to non-responsiveness or lack of urgency"
+      - name: competitive_losses
+        description: "Deals lost to price or competitor"
+      - name: product_fit_losses
+        description: "Deals lost due to POS integration or bad fit"
+      - name: avg_speed_to_lead_min
+        description: "Average minutes to first sales contact (inbound only)"
+      - name: avg_days_to_close_won
+        description: "Average days to close for won deals"
+      - name: avg_won_predicted_sales
+        description: "Average predicted monthly sales for won deals"
+
+  - name: rpt_monthly_unit_economics
+    description: >
+      Monthly unit economics by channel for Jan–Jun 2024.
+      Combines GTM expenses with lead volumes and deal outcomes to calculate
+      cost-per-lead, cost-per-opportunity, and CAC by channel.
+      This is the primary table for answering "how do we improve CAC:LTV?"
+    columns:
+      - name: expense_month
+        description: "Month as DATE"
+        tests:
+          - unique
+          - not_null
+      - name: total_gtm_cost
+        description: "Total GTM spend for the month"
+      - name: inbound_cac
+        description: "Inbound customer acquisition cost (inbound channel cost / inbound wins)"
+      - name: outbound_cac
+        description: "Outbound customer acquisition cost (outbound channel cost / outbound wins)"
+      - name: blended_cac
+        description: "Blended CAC across both channels (total cost / total wins)"
+      - name: inbound_cost_per_lead
+        description: "Inbound channel cost divided by inbound leads generated"
+      - name: outbound_cost_per_lead
+        description: "Outbound channel cost divided by outbound leads generated"
+      - name: inbound_won_predicted_revenue
+        description: "Sum of predicted monthly sales for inbound closed-won deals"
+      - name: outbound_won_predicted_revenue
+        description: "Sum of predicted monthly sales for outbound closed-won deals"
+
+  - name: rpt_cac_ltv_by_channel
+    description: >
+      CAC and LTV analysis by channel (Inbound vs Outbound).
+      One row per channel. LTV is calculated as (monthly subscription + 5% take rate
+      on predicted sales) x customer lifetime months. Since churn data is unavailable,
+      LTV is shown at 12, 24, and 36 month horizons. CAC uses the full Jan-Jun 2024
+      expense window. This is the primary table for evaluating channel investment efficiency.
+    columns:
+      - name: channel
+        description: "Inbound or Outbound"
+        tests:
+          - unique
+          - not_null
+      - name: deals_won
+        description: "Total closed-won deals for this channel"
+      - name: total_cost_6mo
+        description: "Total channel-allocated cost over Jan-Jun 2024"
+      - name: cac
+        description: "Customer acquisition cost (total channel cost / deals won)"
+      - name: avg_monthly_subscription
+        description: "Average monthly subscription fee per won deal ($500 flat)"
+      - name: avg_monthly_take_rate
+        description: "Average monthly take rate revenue per won deal (5% of predicted sales)"
+      - name: avg_monthly_revenue
+        description: "Average total monthly revenue per won deal (subscription + take rate)"
+      - name: avg_ltv_12mo
+        description: "Average LTV assuming 12-month customer lifetime"
+      - name: avg_ltv_24mo
+        description: "Average LTV assuming 24-month customer lifetime"
+      - name: avg_ltv_36mo
+        description: "Average LTV assuming 36-month customer lifetime"
+      - name: ltv_to_cac_12mo
+        description: "LTV:CAC ratio at 12-month horizon"
+      - name: ltv_to_cac_24mo
+        description: "LTV:CAC ratio at 24-month horizon"
+      - name: ltv_to_cac_36mo
+        description: "LTV:CAC ratio at 36-month horizon"
+
+  - name: rpt_pipeline_health
+    description: >
+      Pre-aggregated pipeline health summary by channel and pipeline segment.
+      One row per channel × record_type × pipeline_segment. Powers the Pipeline
+      Health Dashboard with record counts, forecasted revenue, aging, risk/health
+      distribution, and channel composition percentages.
+    columns:
+      - name: channel
+        description: "Inbound or Outbound"
+      - name: record_type
+        description: "Opportunity or Lead"
+      - name: pipeline_segment
+        description: "Segment label (e.g. Early Pipeline, Active Lead, Near Close)"
+      - name: record_count
+        description: "Number of records in this segment"
+      - name: pct_of_channel
+        description: "Share of channel record count (%)"
+      - name: total_forecasted_monthly_revenue
+        description: "Sum of forecasted monthly revenue in segment"
+      - name: total_forecasted_annual_revenue
+        description: "Sum of forecasted annual revenue in segment"
+      - name: pct_of_channel_revenue
+        description: "Share of channel forecasted annual revenue (%)"
+      - name: avg_days_in_pipeline
+        description: "Average days records have been in pipeline"
+      - name: avg_days_in_current_stage
+        description: "Average days in current stage"
+      - name: high_risk_pct
+        description: "Percentage of segment at high loss risk"
+      - name: medium_risk_pct
+        description: "Percentage of segment at medium loss risk"
+      - name: low_risk_pct
+        description: "Percentage of segment at low loss risk"
+      - name: ingest_ts
+        description: "Report load timestamp (from audit_columns macro)"
+      - name: update_ts
+        description: "Report update timestamp (from audit_columns macro)"
+      - name: source_system
+        description: "Pipeline that produced the report (from audit_columns macro)"

@@ -1,0 +1,113 @@
+version: 2
+
+models:
+  - name: stg_leads
+    description: >
+      Staged leads with year bug fixed (+2000 years), predicted sales cast to numeric,
+      marketplace/ordering/cuisine list counts parsed, status values standardized.
+      Derived fields (channel, speed_to_lead, is_converted) are added in entity layer.
+    columns:
+      - name: lead_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: form_submission_date
+        description: "Date the lead submitted a form (corrected from 00xx to 20xx). NULL for outbound leads."
+      - name: first_sales_call_date
+        description: "Timestamp of first sales call to this lead (year-corrected)"
+      - name: first_text_sent_date
+        description: "Timestamp of first text sent to this lead (year-corrected)"
+      - name: first_meeting_booked_date
+        description: "Timestamp of first meeting booked (year-corrected)"
+      - name: last_sales_call_date
+        description: "Timestamp of most recent sales call (year-corrected)"
+      - name: last_sales_activity_date
+        description: "Timestamp of most recent sales activity of any type (year-corrected)"
+      - name: last_sales_email_date
+        description: "Timestamp of most recent sales email (year-corrected)"
+      - name: sales_call_count
+        description: "Number of sales calls made (0 if null)"
+      - name: sales_text_count
+        description: "Number of sales texts sent (0 if null)"
+      - name: sales_email_count
+        description: "Number of sales emails sent (0 if null)"
+      - name: predicted_sales_with_owner
+        description: "Predicted monthly sales if using Owner.com, cast from comma-decimal text to DOUBLE"
+      - name: marketplace_count
+        description: "Number of marketplace platforms used (parsed from stringified Python list)"
+      - name: online_ordering_count
+        description: "Number of online ordering platforms used (parsed from stringified Python list)"
+      - name: cuisine_type_count
+        description: "Number of cuisine types (parsed from stringified Python list)"
+      - name: location_count
+        description: "Number of restaurant locations"
+      - name: connected_with_decision_maker
+        description: "Whether sales connected with a decision maker"
+      - name: status
+        description: "Lead status (standardized — underscores replaced with spaces)"
+      - name: converted_opportunity_id
+        description: "FK to opportunities table (NULL if not converted)"
+
+  - name: stg_opportunities
+    description: >
+      Staged opportunities with year bug fixed (+2000 years) on all date columns.
+      Derived fields (deal_outcome, days_to_close) are added in entity layer.
+    columns:
+      - name: opportunity_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: stage_name
+        description: "Current stage (Closed Won, Closed Lost, or open pipeline stages)"
+      - name: lost_reason_c
+        description: "Reason for loss (only populated for Closed Lost)"
+      - name: closed_lost_notes_c
+        description: "Free-text notes on why the deal was lost"
+      - name: business_issue_c
+        description: "Business issue the prospect was trying to solve"
+      - name: how_did_you_hear_about_us_c
+        description: "Source attribution (sparsely populated)"
+      - name: created_date
+        description: "When the opportunity was created (year-corrected)"
+      - name: demo_held
+        description: "Whether a demo was conducted"
+      - name: demo_set_date
+        description: "Date demo was scheduled (year-corrected)"
+      - name: demo_time
+        description: "Timestamp of the demo (year-corrected)"
+      - name: close_date
+        description: "Date the deal closed (year-corrected)"
+      - name: last_sales_call_date_time
+        description: "Most recent sales call timestamp (year-corrected)"
+      - name: account_id
+        description: "Associated Salesforce account"
+
+  - name: stg_expenses_advertising
+    description: >
+      Monthly advertising spend with month parsed from text ('Jan-24') to DATE
+      and currency parsed from text ('US$ 55 779,40') to numeric.
+    columns:
+      - name: expense_month
+        description: "First of month as DATE (parsed from 'Mon-YY' text)"
+        tests:
+          - unique
+          - not_null
+      - name: advertising_spend
+        description: "Monthly advertising spend in USD (parsed from formatted text)"
+
+  - name: stg_expenses_salary_and_commissions
+    description: >
+      Monthly sales team costs by channel with month parsed from text to DATE
+      and currency columns parsed from text to numeric.
+    columns:
+      - name: expense_month
+        description: "First of month as DATE (parsed from 'Mon-YY' text)"
+        tests:
+          - unique
+          - not_null
+      - name: outbound_sales_team_cost
+        description: "Monthly outbound sales team salary + commissions in USD"
+      - name: inbound_sales_team_cost
+        description: "Monthly inbound sales team salary + commissions in USD"

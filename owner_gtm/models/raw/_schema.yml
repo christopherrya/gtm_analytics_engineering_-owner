@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: raw_leads
+    description: "Deduplicated leads from ingress layer"
+
+  - name: raw_opportunities
+    description: "Deduplicated opportunities from ingress layer"
+
+  - name: raw_expenses_advertising
+    description: "Deduplicated advertising expenses from ingress layer"
+
+  - name: raw_expenses_salary_and_commissions
+    description: "Deduplicated salary and commission expenses from ingress layer"

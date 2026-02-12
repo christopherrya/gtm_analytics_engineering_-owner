@@ -1,0 +1,17 @@
+# Logs and runtime
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# dbt (in case run from repo root)
+owner_gtm/target/
+owner_gtm/dbt_packages/
+
+# Credentials — never commit
+profiles.yml
+.env
+.env.*
+*.pem

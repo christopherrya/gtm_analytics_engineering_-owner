@@ -1,0 +1,35 @@
+version: 2
+
+sources:
+  - name: gtm_case
+    database: demo_db
+    schema: gtm_case
+    description: "Source tables for GTM analytics case study"
+    tables:
+      - name: leads
+        description: "Lead records with sales activity data, marketplace usage, and conversion status"
+        columns:
+          - name: lead_id
+            description: "Primary key - unique lead identifier"
+            tests:
+              - unique
+
+      - name: opportunities
+        description: "Sales opportunity records with stage progression and close data"
+        columns:
+          - name: opportunity_id
+            description: "Primary key - unique opportunity identifier"
+            tests:
+              - unique
+
+      - name: expenses_advertising
+        description: "Monthly advertising spend (6 months)"
+        columns:
+          - name: month
+            description: "Month in text format (e.g., 'Jan-24')"
+
+      - name: expenses_salary_and_commissions
+        description: "Monthly salary and commission expenses for sales teams (6 months)"
+        columns:
+          - name: month
+            description: "Month in text format (e.g., 'Jan-24')"

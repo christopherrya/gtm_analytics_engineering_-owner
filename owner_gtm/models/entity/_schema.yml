@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: entity_leads
+    description: >
+      Lead entity with business logic and derived fields built on top of staging.
+      Adds channel, total_touch_count, speed_to_lead_minutes, and is_converted.
+    columns:
+      - name: lead_id
+        description: "Primary key - unique lead identifier"
+        tests:
+          - unique
+          - not_null
+      - name: form_submission_date
+        description: "Date the lead submitted a form (year-corrected). NULL for outbound."
+      - name: first_sales_call_date
+        description: "Timestamp of first sales call (year-corrected)"
+      - name: first_text_sent_date
+        description: "Timestamp of first text sent (year-corrected)"
+      - name: first_meeting_booked_date
+        description: "Timestamp of first meeting booked (year-corrected)"
+      - name: last_sales_call_date
+        description: "Timestamp of most recent sales call (year-corrected)"
+      - name: last_sales_activity_date
+        description: "Timestamp of most recent sales activity (year-corrected)"
+      - name: last_sales_email_date
+        description: "Timestamp of most recent sales email (year-corrected)"
+      - name: sales_call_count
+        description: "Number of sales calls made (0 if null)"
+      - name: sales_text_count
+        description: "Number of sales texts sent (0 if null)"
+      - name: sales_email_count
+        description: "Number of sales emails sent (0 if null)"
+      - name: total_touch_count
+        description: "Derived: Sum of sales calls, texts, and emails"
+      - name: predicted_sales_with_owner
+        description: "Predicted monthly sales if using Owner.com (cast to numeric in staging)"
+      - name: marketplace_count
+        description: "Number of marketplace platforms used (parsed from list)"
+      - name: marketplaces_used_raw
+        description: "Raw marketplaces_used string from source"
+      - name: online_ordering_count
+        description: "Number of online ordering platforms used (parsed from list)"
+      - name: online_ordering_used_raw
+        description: "Raw online_ordering_used string from source"
+      - name: cuisine_type_count
+        description: "Number of cuisine types (parsed from list)"
+      - name: cuisine_types_raw
+        description: "Raw cuisine_types string from source"
+      - name: location_count
+        description: "Number of restaurant locations"
+      - name: connected_with_decision_maker
+        description: "Whether sales connected with a decision maker"
+      - name: status
+        description: "Lead status (standardized)"
+      - name: converted_opportunity_id
+        description: "FK to opportunities (NULL if not converted)"
+      - name: channel
+        description: "Derived: Inbound (form submitted) or Outbound"
+      - name: speed_to_lead_minutes
+        description: "Derived: Minutes from form submission to first sales contact (inbound only)"
+      - name: is_converted
+        description: "Derived: True if lead converted to an opportunity"
+
+  - name: entity_opportunities
+    description: >
+      Opportunity entity with business logic and derived fields built on top of staging.
+      Adds deal_outcome, days_to_close, days_to_demo, days_demo_to_close, and is_closed_* flags.
+    columns:
+      - name: opportunity_id
+        description: "Primary key - unique opportunity identifier"
+        tests:
+          - unique
+          - not_null
+      - name: stage_name
+        description: "Current stage (Closed Won, Closed Lost, or open pipeline stages)"
+      - name: deal_outcome
+        description: "Derived: Won, Lost, or Open based on stage_name"
+      - name: lost_reason_c
+        description: "Reason for loss (only populated for Closed Lost)"
+      - name: closed_lost_notes_c
+        description: "Free-text notes on why the deal was lost"
+      - name: business_issue_c
+        description: "Business issue the prospect was trying to solve"
+      - name: how_did_you_hear_about_us_c
+        description: "Source attribution (sparsely populated)"
+      - name: created_date
+        description: "When the opportunity was created (year-corrected)"
+      - name: demo_held
+        description: "Whether a demo was conducted"
+      - name: demo_set_date
+        description: "Date demo was scheduled (year-corrected)"
+      - name: demo_time
+        description: "Timestamp of the demo (year-corrected)"
+      - name: close_date
+        description: "Date the deal closed (year-corrected)"
+      - name: last_sales_call_date_time
+        description: "Most recent sales call timestamp (year-corrected)"
+      - name: days_to_close
+        description: "Derived: Days from opportunity creation to close"
+      - name: days_to_demo
+        description: "Derived: Days from opportunity creation to demo set"
+      - name: days_demo_to_close
+        description: "Derived: Days from demo set to close"
+      - name: is_closed_won
+        description: "Derived: True for Closed Won deals"
+      - name: is_closed_lost
+        description: "Derived: True for Closed Lost deals"
+      - name: is_closed
+        description: "Derived: True for any closed deal (won or lost)"
+      - name: account_id
+        description: "Associated Salesforce account"
